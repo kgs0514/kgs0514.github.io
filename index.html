@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f7f1e8">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Nourish">
+<title>Nourish — Meal Planner</title>
+<style>
+:root{
+  --cream:#faf3ef;--paper:#fffdfb;--pink:#e7aeb9;--pink2:#f6dfe3;
+  --sage:#aebca5;--sage2:#dce5d8;--rose:#f0c9cf;--rose2:#fff0f2;--ink:#383a35;--muted:#77786f;
+  --line:#e6ddd2;--shadow:0 12px 35px rgba(75,65,52,.08);--radius:22px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--cream);color:var(--ink);font-family:ui-rounded,"SF Pro Rounded",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+button,input,textarea,select{font:inherit}
+button{border:0;cursor:pointer;color:inherit}
+.app{max-width:1180px;margin:auto;padding:18px 16px 100px}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:8px 0 20px}
+.brand{display:flex;align-items:center;gap:11px}
+.logo{width:46px;height:46px;border-radius:16px;background:var(--paper);display:grid;place-items:center;box-shadow:var(--shadow);font-size:23px}
+h1,h2,h3,p{margin:0} h1{font-family:Georgia,serif;font-size:27px;font-weight:600;letter-spacing:-.5px}
+.subtitle{font-size:12px;color:var(--muted);margin-top:2px}
+.iconbtn{width:42px;height:42px;border-radius:14px;background:var(--paper);box-shadow:var(--shadow);font-size:18px}
+.hero{background:radial-gradient(circle at 92% 18%,rgba(231,174,185,.24) 0 32px,transparent 33px),radial-gradient(circle at 96% 32%,rgba(174,188,165,.18) 0 13px,transparent 14px),linear-gradient(135deg,var(--paper),#f8e8e9);border:1px solid rgba(255,255,255,.8);border-radius:30px;padding:24px;box-shadow:var(--shadow);margin-bottom:18px}
+.hero h2{font-family:Georgia,serif;font-size:30px;font-weight:500;line-height:1.12;margin-bottom:8px}
+.hero p{color:var(--muted);font-size:14px;max-width:650px;line-height:1.5}
+.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:18px}
+.btn{padding:11px 15px;border-radius:14px;background:var(--paper);font-weight:700;font-size:13px;box-shadow:0 5px 18px rgba(60,50,40,.07)}
+.btn.primary{background:var(--ink);color:white}.btn.sage{background:var(--sage2)}.btn.pink{background:var(--pink2)}
+.nav{display:flex;gap:7px;overflow:auto;padding:4px 0 12px;margin-bottom:5px;position:sticky;top:0;z-index:5;background:rgba(247,241,232,.93);backdrop-filter:blur(12px)}
+.nav button{white-space:nowrap;padding:10px 13px;border-radius:13px;background:transparent;font-weight:700;font-size:13px}
+.nav button.active{background:var(--paper);box-shadow:var(--shadow)}
+.view{display:none}.view.active{display:block}
+.sectionhead{display:flex;justify-content:space-between;align-items:end;gap:10px;margin:18px 0 12px}
+.sectionhead h2{font-family:Georgia,serif;font-size:23px;font-weight:500}
+.small{font-size:12px;color:var(--muted)}
+.weekgrid{display:grid;grid-template-columns:repeat(7,minmax(150px,1fr));gap:10px;overflow-x:auto;padding-bottom:6px}
+.day{background:var(--paper);border-radius:20px;padding:12px;box-shadow:var(--shadow);min-width:150px}
+.daytitle{font-weight:800;font-size:13px;margin-bottom:10px}.daydate{color:var(--muted);font-size:11px;font-weight:500}
+.meal{background:#faf7f1;cursor:pointer;transition:transform .15s,box-shadow .15s;border:1px solid var(--line);border-radius:15px;padding:10px;margin:7px 0;min-height:73px;position:relative}
+.meal:hover,.meal:active{transform:translateY(-1px);box-shadow:0 6px 16px rgba(60,50,40,.08)}
+.mealtype{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);font-weight:800}
+.mealname{font-weight:750;font-size:12px;line-height:1.25;margin:4px 22px 0 0}
+.meal button{position:absolute;z-index:2;right:7px;top:8px;background:transparent;font-size:14px;color:#9b8d7c}
+.cardgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
+.card{background:var(--paper);border-radius:20px;padding:15px;box-shadow:var(--shadow);border:1px solid rgba(230,221,210,.65)}
+.recipe-card{min-height:165px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden}.recipe-card:after{content:"";position:absolute;width:85px;height:85px;border-radius:50%;background:var(--rose2);right:-35px;top:-35px;z-index:0}.recipe-card>*{position:relative;z-index:1}
+.badges{display:flex;gap:5px;flex-wrap:wrap;margin-top:9px}.badge{background:var(--sage2);padding:5px 8px;border-radius:99px;font-size:9px;font-weight:800}
+.searchrow{display:flex;gap:9px;margin:10px 0;flex-wrap:wrap}
+.search{flex:1;min-width:190px;background:var(--paper);border:1px solid var(--line);border-radius:15px;padding:12px 14px;outline:none}
+.filters{display:flex;gap:7px;overflow:auto;padding:2px 0 10px}.filter{padding:8px 11px;border-radius:99px;background:var(--paper);font-size:11px;font-weight:700;white-space:nowrap}.filter.active{background:var(--ink);color:#fff}
+.empty{padding:35px;text-align:center;color:var(--muted);background:var(--paper);border-radius:20px}
+.list{display:grid;gap:8px}.listitem{background:var(--paper);padding:13px 15px;border-radius:15px;display:flex;align-items:center;gap:11px;box-shadow:var(--shadow)}
+.check{width:22px;height:22px;border-radius:7px;border:1.5px solid #c8beb1;background:transparent;display:grid;place-items:center;flex:none}.check.done{background:var(--sage);border-color:var(--sage)}.check.done:after{content:"✓";font-size:13px;color:white}
+.strike{text-decoration:line-through;color:#999}
+.modal{position:fixed;inset:0;background:rgba(45,40,35,.35);display:none;align-items:flex-end;justify-content:center;z-index:20;padding:10px}.modal.show{display:flex}
+.sheet{background:var(--paper);width:min(720px,100%);max-height:90vh;overflow:auto;border-radius:28px 28px 16px 16px;padding:23px;box-shadow:0 20px 70px rgba(30,25,20,.2)}
+.close{float:right;background:var(--cream);width:36px;height:36px;border-radius:12px;font-size:18px}.sheet h2{font-family:Georgia,serif;font-size:27px;margin:5px 42px 8px 0}.meal-hero{display:flex;align-items:center;gap:14px;background:linear-gradient(135deg,var(--rose2),var(--sage2));border-radius:22px;padding:18px;margin:10px 0 16px}.meal-photo{width:78px;height:78px;border-radius:20px;background:rgba(255,255,255,.72);display:grid;place-items:center;font-size:42px;box-shadow:0 8px 22px rgba(60,50,40,.08);flex:none}.meal-hero-copy{min-width:0}.meal-hero-copy h2{margin:0 0 5px;font-size:25px}.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.detail-box{background:#faf7f1;border:1px solid var(--line);border-radius:16px;padding:12px}.detail-box strong{display:block;font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:5px}.tap-hint{font-size:10px;color:var(--muted);margin-top:5px}.sheet h3{font-size:15px;margin:20px 0 8px}.sheet p,.sheet li{font-size:13px;line-height:1.55;color:#5f6059}.sheet ul,.sheet ol{padding-left:20px}
+.form{display:grid;gap:10px}.form input,.form textarea,.form select{width:100%;border:1px solid var(--line);background:#fbf8f3;border-radius:13px;padding:12px;outline:none}.form textarea{min-height:95px;resize:vertical}.two{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--ink);color:white;padding:11px 15px;border-radius:14px;font-size:12px;opacity:0;pointer-events:none;transition:.25s;z-index:50}.toast.show{opacity:1;transform:translateX(-50%)}
+footer{text-align:center;color:var(--muted);font-size:11px;margin-top:28px}
+@media(max-width:850px){.cardgrid{grid-template-columns:repeat(2,minmax(0,1fr))}.weekgrid{grid-template-columns:repeat(7,150px)}}
+@media(max-width:560px){.app{padding:12px 12px 90px}.hero{padding:20px}.hero h2{font-size:27px}.cardgrid{grid-template-columns:1fr 1fr}.card{padding:12px}.recipe-card{min-height:155px}.sectionhead h2{font-size:21px}.two{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+  <div class="brand"><div class="logo">🌷</div><div><h1>Nourish</h1><div class="subtitle">your simple weekly meal planner</div></div></div>
+  <button class="iconbtn" onclick="openAdd()">＋</button>
+</header>
+
+<div class="nav" id="nav">
+  <button class="active" data-view="planner">Planner</button>
+  <button data-view="library">Recipes</button>
+  <button data-view="grocery">Grocery</button>
+  <button data-view="prep">Prep</button>
+  <button data-view="favorites">♡ Favorites</button>
+</div>
+
+<main>
+<section id="planner" class="view active">
+  <div class="hero">
+    <h2>A week that feels good<br>to come home to.</h2>
+    <p>Plan it, shuffle it, or swap just one meal. Your recipes, favorites, groceries, and custom meals stay right on this device.</p>
+    <div style="margin-top:14px;background:rgba(255,255,255,.58);border-radius:16px;padding:11px 13px;font-size:12px;line-height:1.5;color:#66675f">
+      <strong style="color:var(--ink)">Picky-friendly + active:</strong> the library emphasizes familiar foods, easy swaps, satisfying carbs, protein-rich choices, fruits and vegetables, and convenient snacks for busy school and training days.
+    </div>
+    <div class="actions">
+      <button class="btn primary" onclick="shuffleWeek()">✦ Shuffle Week</button>
+      <button class="btn sage" onclick="showPremade()">♡ Choose a Rotation</button>
+      <button class="btn pink" onclick="openAdd()">＋ Add Meal</button>
+      <button class="btn" onclick="openTrainingIdeas()">🏃 Training-Day Ideas</button>
+    </div>
+  </div>
+  <div class="sectionhead"><div><h2>This Week</h2><div class="small" id="weekLabel"></div></div><button class="btn" onclick="window.print()">Print</button></div>
+  <div id="weekGrid" class="weekgrid"></div>
+</section>
+
+<section id="library" class="view">
+  <div class="sectionhead"><div><h2>Recipe Library</h2><div class="small" id="libraryCount"></div></div><button class="btn primary" onclick="openAdd()">＋ New Recipe</button></div>
+  <div class="searchrow"><input id="search" class="search" placeholder="Search meals, ingredients, or tags…" oninput="renderLibrary()"></div>
+  <div id="filters" class="filters"></div>
+  <div id="libraryGrid" class="cardgrid"></div>
+</section>
+
+<section id="grocery" class="view">
+  <div class="sectionhead"><div><h2>Grocery List</h2><div class="small">Built automatically from this week's planner.</div></div><button class="btn" onclick="clearGroceries()">Clear checks</button></div>
+  <div id="groceryList" class="list"></div>
+</section>
+
+<section id="prep" class="view">
+  <div class="sectionhead"><div><h2>Meal Prep</h2><div class="small">A simple checklist for the week.</div></div><button class="btn primary" onclick="makePrep()">Refresh Prep</button></div>
+  <div id="prepList" class="list"></div>
+</section>
+
+<section id="favorites" class="view">
+  <div class="sectionhead"><div><h2>Your Favorites</h2><div class="small">Recipes you want close by.</div></div></div>
+  <div id="favoriteGrid" class="cardgrid"></div>
+</section>
+</main>
+<footer>Nourish • everything is saved locally on this device</footer>
+</div>
+
+<div id="modal" class="modal" onclick="if(event.target===this)closeModal()"><div class="sheet" id="sheet"></div></div>
+<div id="toast" class="toast"></div>
+
+<script>
+const CATS=["Breakfast","Lunch","Dinner","Snacks","High Protein","Smoothies","Quick & Easy","Meal Prep","Picky-Friendly"];
+const days=["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
+const baseMeals=[
+["Greek Yogurt Berry Bowl","Breakfast",["Greek yogurt","berries","granola","honey"],"5 min","2","Layer yogurt, berries and granola. Drizzle with honey.","High Protein"],
+["Avocado Egg Toast","Breakfast",["sourdough bread","avocado","eggs","everything seasoning"],"10 min","2","Toast bread. Mash avocado on top and add a cooked egg and seasoning.","Quick & Easy"],
+["Peanut Butter Banana Oats","Breakfast",["rolled oats","banana","peanut butter","milk","cinnamon"],"8 min","2","Simmer oats with milk. Top with banana, peanut butter and cinnamon.","Meal Prep"],
+["Spinach Feta Egg Wrap","Breakfast",["eggs","spinach","feta","whole wheat tortilla"],"10 min","2","Scramble eggs with spinach and feta. Wrap in a warm tortilla.","High Protein","Quick & Easy"],
+["Strawberry Chia Pudding","Breakfast",["chia seeds","milk","strawberries","maple syrup"],"5 min + chill","2","Stir chia, milk and maple syrup. Chill until thick and top with strawberries.","Meal Prep"],
+["Apple Cinnamon French Toast","Breakfast",["bread","eggs","milk","apple","cinnamon"],"15 min","2","Dip bread in egg mixture and cook until golden. Top with warm sliced apple.",""],
+["Blueberry Protein Pancakes","Breakfast",["oats","banana","eggs","blueberries","Greek yogurt"],"15 min","2","Blend oats, banana and eggs. Cook small pancakes and fold in blueberries. Serve with yogurt.","High Protein"],
+["Breakfast Burrito","Breakfast",["eggs","black beans","cheddar","salsa","tortilla"],"15 min","2","Scramble eggs and fill tortillas with beans, cheese and salsa.","High Protein","Quick & Easy"],
+["Chicken Caesar Wrap","Lunch",["chicken breast","romaine","parmesan","tortilla","Caesar dressing"],"15 min","2","Slice cooked chicken. Toss with romaine, parmesan and dressing, then wrap.","High Protein","Quick & Easy"],
+["Turkey Hummus Crunch Wrap","Lunch",["turkey","hummus","cucumber","carrot","tortilla"],"10 min","2","Spread hummus on tortilla. Add turkey and crunchy vegetables; roll tightly.","Quick & Easy"],
+["Caprese Pasta Salad","Lunch",["pasta","cherry tomatoes","mozzarella","basil","olive oil"],"20 min","4","Cook pasta, cool, then toss with tomatoes, mozzarella, basil and olive oil.","Meal Prep"],
+["Southwest Chicken Bowl","Lunch",["chicken","rice","black beans","corn","avocado","salsa"],"25 min","2","Layer rice, seasoned chicken, beans, corn and avocado. Finish with salsa.","High Protein","Meal Prep"],
+["Mediterranean Chickpea Pita","Lunch",["chickpeas","cucumber","tomato","feta","pita","tzatziki"],"10 min","2","Toss chickpeas and vegetables with feta. Stuff into pita with tzatziki.",""],
+["Tuna Avocado Toast","Lunch",["tuna","avocado","bread","lemon","greens"],"10 min","2","Mix tuna with lemon. Spread avocado on toast and top with tuna and greens.","High Protein","Quick & Easy"],
+["Tomato Basil Grilled Cheese","Lunch",["sourdough","cheddar","tomato","basil","butter"],"12 min","2","Layer cheese, tomato and basil between bread. Grill in butter until crisp.","Quick & Easy"],
+["Chicken Pesto Pasta","Dinner",["chicken","pasta","pesto","parmesan","spinach"],"25 min","4","Cook pasta. Sauté chicken, then toss with pesto, spinach, pasta and parmesan.","High Protein","Meal Prep"],
+["Honey Garlic Salmon","Dinner",["salmon","honey","garlic","soy sauce","broccoli","rice"],"25 min","2","Brush salmon with honey-garlic sauce and bake. Serve with broccoli and rice.","High Protein"],
+["Turkey Taco Bowls","Dinner",["ground turkey","rice","black beans","corn","salsa","avocado"],"25 min","4","Brown turkey with taco seasoning. Serve over rice with beans, corn, salsa and avocado.","High Protein","Meal Prep"],
+["Creamy Tomato Gnocchi","Dinner",["gnocchi","tomato sauce","cream","parmesan","spinach"],"20 min","4","Simmer sauce and cream. Add gnocchi and spinach; finish with parmesan.",""],
+["Sheet Pan Chicken Fajitas","Dinner",["chicken","bell peppers","onion","fajita seasoning","tortillas"],"30 min","4","Slice everything, season, and roast on one sheet pan. Serve in warm tortillas.","Quick & Easy","Meal Prep"],
+["Teriyaki Chicken Rice Bowls","Dinner",["chicken","rice","broccoli","teriyaki sauce","sesame seeds"],"25 min","4","Cook chicken in teriyaki sauce. Serve over rice with steamed broccoli.","High Protein","Meal Prep"],
+["Pesto Shrimp & Veggie Skillet","Dinner",["shrimp","zucchini","cherry tomatoes","pesto","lemon"],"20 min","2","Sauté shrimp and vegetables. Toss with pesto and lemon.","High Protein","Quick & Easy"],
+["Turkey Meatballs & Marinara","Dinner",["ground turkey","breadcrumbs","egg","marinara","pasta"],"35 min","4","Mix and shape turkey meatballs. Bake until cooked and serve with marinara and pasta.","High Protein"],
+["Veggie Fried Rice","Dinner",["rice","eggs","peas","carrots","soy sauce","green onion"],"20 min","4","Stir-fry vegetables, add rice and eggs, then season with soy sauce.","Quick & Easy"],
+["Chicken Parmesan","Dinner",["chicken","breadcrumbs","marinara","mozzarella","pasta"],"35 min","4","Bread chicken and bake. Top with marinara and mozzarella; serve with pasta.",""],
+["BBQ Chicken Sweet Potato","Dinner",["chicken","sweet potato","BBQ sauce","Greek yogurt","green onion"],"30 min","2","Bake sweet potatoes. Fill with shredded BBQ chicken and a spoonful of yogurt.","High Protein","Meal Prep"],
+["Berry Almond Smoothie","Smoothies",["frozen berries","banana","almond milk","almond butter","Greek yogurt"],"5 min","1","Blend everything until smooth.","High Protein"],
+["Peanut Butter Chocolate Smoothie","Smoothies",["banana","milk","peanut butter","cocoa","Greek yogurt"],"5 min","1","Blend until creamy and chilled.","High Protein"],
+["Green Mango Smoothie","Smoothies",["mango","spinach","banana","orange juice","Greek yogurt"],"5 min","1","Blend all ingredients until smooth.",""],
+["Tropical Pineapple Smoothie","Smoothies",["pineapple","mango","banana","coconut milk"],"5 min","1","Blend until frothy and smooth.",""],
+["Apple Peanut Butter","Snacks",["apple","peanut butter","cinnamon"],"3 min","1","Slice apple and serve with peanut butter and cinnamon.","Quick & Easy"],
+["Cottage Cheese Berry Cup","Snacks",["cottage cheese","berries","honey","almonds"],"5 min","1","Spoon cottage cheese into a bowl and top with berries, honey and almonds.","High Protein","Quick & Easy"],
+["Hummus Veggie Plate","Snacks",["hummus","carrots","cucumber","bell pepper","crackers"],"5 min","2","Slice vegetables and serve with hummus and crackers.","Quick & Easy"],
+["Chocolate Banana Yogurt Bark","Snacks",["Greek yogurt","banana","dark chocolate","peanut butter"],"10 min + chill","4","Spread yogurt on a lined tray, top with banana and chocolate, then freeze until firm.","Meal Prep"],
+["Energy Bites","Snacks",["oats","peanut butter","honey","mini chocolate chips"],"10 min","10","Mix ingredients, roll into balls and chill.","Meal Prep"],
+["Overnight Oats","Meal Prep",["oats","milk","Greek yogurt","chia seeds","berries"],"5 min + chill","3","Mix everything in jars and refrigerate overnight.","Meal Prep"],
+["Lemon Herb Chicken Prep","Meal Prep",["chicken","rice","broccoli","lemon","olive oil"],"30 min","4","Season chicken with lemon and herbs. Cook with rice and broccoli for four portions.","High Protein","Meal Prep"],
+["Protein Snack Boxes","Meal Prep",["hard-boiled eggs","cheddar","grapes","crackers","turkey"],"15 min","4","Divide ingredients into four containers for grab-and-go snacks.","High Protein","Meal Prep"],
+["Freezer Smoothie Packs","Meal Prep",["frozen berries","banana","spinach","mango"],"10 min","4","Portion fruit and greens into freezer bags. Add liquid when blending.","Meal Prep"],
+["Creamy Chicken Tortellini","Dinner",["chicken","tortellini","cream","spinach","parmesan"],"25 min","4","Cook chicken, add cream and spinach, then toss with cooked tortellini and parmesan.","High Protein"],
+["Greek Chicken Pita","Lunch",["chicken","pita","cucumber","tomato","feta","tzatziki"],"15 min","2","Fill warm pita with chicken, vegetables, feta and tzatziki.","High Protein","Quick & Easy"],
+["Buffalo Chicken Salad","Lunch",["chicken","romaine","buffalo sauce","ranch","celery"],"15 min","2","Toss chopped chicken and romaine with buffalo sauce, celery and ranch.","High Protein","Quick & Easy"],
+["Veggie Quesadillas","Lunch",["tortillas","cheddar","bell pepper","corn","black beans","salsa"],"15 min","2","Fill tortillas with cheese and vegetables. Toast in a skillet and serve with salsa.","Quick & Easy"],
+["Baked Oatmeal Cups","Breakfast",["oats","banana","eggs","milk","blueberries","maple syrup"],"25 min","6","Mix ingredients, portion into muffin cups and bake until set.","Meal Prep"],
+["Cinnamon Berry Toast","Breakfast",["bread","cream cheese","berries","cinnamon","honey"],"8 min","2","Toast bread, spread cream cheese and top with berries, cinnamon and honey.","Quick & Easy"],
+["Garlic Butter Chicken & Potatoes","Dinner",["chicken","baby potatoes","green beans","butter","garlic"],"35 min","4","Roast potatoes and green beans. Sear chicken with garlic butter and serve together.","High Protein"],
+["Marry Me Chickpeas","Dinner",["chickpeas","sun-dried tomatoes","cream","spinach","parmesan"],"25 min","4","Simmer chickpeas in creamy tomato sauce with spinach and parmesan.",""],
+["Teriyaki Tofu Bowls","Dinner",["tofu","rice","broccoli","teriyaki sauce","sesame seeds"],"25 min","4","Crisp tofu in a skillet and glaze with teriyaki. Serve over rice and broccoli.",""],
+["Chicken & Avocado Sandwich","Lunch",["chicken","bread","avocado","tomato","lettuce"],"10 min","2","Layer sliced chicken, avocado, tomato and lettuce on toasted bread.","High Protein","Quick & Easy"],
+["Pasta Primavera","Dinner",["pasta","zucchini","bell pepper","cherry tomatoes","parmesan"],"25 min","4","Sauté vegetables and toss with pasta and parmesan.","Meal Prep"],
+["Strawberry Banana Smoothie","Smoothies",["strawberries","banana","milk","Greek yogurt"],"5 min","1","Blend until creamy.","High Protein","Quick & Easy"],
+["Cucumber Turkey Roll-Ups","Snacks",["turkey","cream cheese","cucumber"],"5 min","2","Spread cream cheese on turkey, add cucumber and roll tightly.","High Protein","Quick & Easy"]
+];
+
+let meals=JSON.parse(localStorage.getItem("nourishMeals")||"null");
+if(!meals) meals=baseMeals.map((m,i)=>({id:"m"+i,name:m[0],category:m[1],ingredients:m[2],time:m[3],servings:m[4],instructions:m[5],tags:m.slice(6)}));
+const pickyFriendlyNames=new Set(["Greek Yogurt Berry Bowl","Avocado Egg Toast","Peanut Butter Banana Oats","Spinach Feta Egg Wrap","Blueberry Protein Pancakes","Breakfast Burrito","Chicken Caesar Wrap","Turkey Hummus Crunch Wrap","Southwest Chicken Bowl","Tuna Avocado Toast","Tomato Basil Grilled Cheese","Chicken Pesto Pasta","Honey Garlic Salmon","Turkey Taco Bowls","Creamy Tomato Gnocchi","Sheet Pan Chicken Fajitas","Teriyaki Chicken Rice Bowls","Turkey Meatballs & Marinara","Veggie Fried Rice","Chicken Parmesan","BBQ Chicken Sweet Potato","Berry Almond Smoothie","Peanut Butter Chocolate Smoothie","Strawberry Banana Smoothie","Apple Peanut Butter","Cottage Cheese Berry Cup","Hummus Veggie Plate","Energy Bites","Overnight Oats","Protein Snack Boxes","Greek Chicken Pita","Veggie Quesadillas","Baked Oatmeal Cups","Cinnamon Berry Toast","Garlic Butter Chicken & Potatoes","Chicken & Avocado Sandwich","Pasta Primavera","Cucumber Turkey Roll-Ups"]);
+meals.forEach(m=>{if(pickyFriendlyNames.has(m.name)&&!m.tags.includes("Picky-Friendly"))m.tags.push("Picky-Friendly")});
+let state=JSON.parse(localStorage.getItem("nourishState")||"null")||{week:{},favorites:[],grocery:{},prep:[]};
+let activeCat="All";
+function save(){localStorage.setItem("nourishMeals",JSON.stringify(meals));localStorage.setItem("nourishState",JSON.stringify(state))}
+function toast(t){let x=document.getElementById("toast");x.textContent=t;x.classList.add("show");clearTimeout(window.tt);window.tt=setTimeout(()=>x.classList.remove("show"),1800)}
+function showView(v){document.querySelectorAll(".view").forEach(x=>x.classList.remove("active"));document.getElementById(v).classList.add("active");document.querySelectorAll(".nav button").forEach(x=>x.classList.toggle("active",x.dataset.view===v));if(v==="planner")renderWeek();if(v==="library")renderLibrary();if(v==="grocery")renderGroceries();if(v==="prep")renderPrep();if(v==="favorites")renderFavorites();scrollTo({top:0,behavior:"smooth"})}
+document.querySelectorAll(".nav button").forEach(b=>b.onclick=()=>showView(b.dataset.view));
+function randomChoice(arr){return arr[Math.floor(Math.random()*arr.length)]}
+function pool(type){return meals.filter(m=>m.category===type||m.tags.includes(type))}
+function buildWeek(){let used=new Set(), w={};days.forEach(d=>{w[d]={};["Breakfast","Lunch","Dinner","Snacks"].forEach(type=>{let p=pool(type).filter(m=>!used.has(m.id));if(!p.length)p=pool(type);let m=randomChoice(p);used.add(m.id);w[d][type]=m.id})});return w}
+function shuffleWeek(){state.week=buildWeek();save();renderWeek();renderGroceries();renderPrep();toast("A fresh week is ready ✦")}
+function renderWeek(){
+ const grid=document.getElementById("weekGrid");let now=new Date(), monday=new Date(now);let day=(monday.getDay()+6)%7;monday.setDate(monday.getDate()-day);
+ document.getElementById("weekLabel").textContent=monday.toLocaleDateString(undefined,{month:"short",day:"numeric"})+" – "+new Date(monday.getTime()+6*86400000).toLocaleDateString(undefined,{month:"short",day:"numeric"});
+ if(!Object.keys(state.week).length)state.week=buildWeek();
+ grid.innerHTML=days.map((d,di)=>{let date=new Date(monday.getTime()+di*86400000);return `<div class="day"><div class="daytitle">${d}<div class="daydate">${date.toLocaleDateString(undefined,{month:"short",day:"numeric"})}</div></div>${["Breakfast","Lunch","Dinner","Snacks"].map(type=>{let id=state.week[d]?.[type],m=meals.find(x=>x.id===id);return `<div class="meal" onclick="openRecipe('${m?m.id:""}')"><div class="mealtype">${type} ${type==="Breakfast"?"☀️":type==="Lunch"?"🥗":type==="Dinner"?"🌙":"🍓"}</div><div class="mealname">${m?mealIcon(m)+" "+m.name:"Choose a meal"}</div><div class="tap-hint">Tap for ingredients & directions</div><button title="Swap" onclick="event.stopPropagation();swapMeal('${d}','${type}')">↻</button></div>`}).join("")}</div>`}).join("");
+ save()
+}
+function swapMeal(day,type){let p=pool(type).filter(m=>m.id!==state.week[day][type]);if(!p.length)return;state.week[day][type]=randomChoice(p).id;save();renderWeek();renderGroceries();renderPrep();toast(type+" swapped")}
+function mealIcon(m){
+ const n=(m.name+" "+m.category).toLowerCase();
+ if(n.includes("smoothie")) return "🥤";
+ if(n.includes("salad")) return "🥗";
+ if(n.includes("pasta")||n.includes("gnocchi")||n.includes("tortellini")) return "🍝";
+ if(n.includes("taco")||n.includes("quesadilla")||n.includes("burrito")||n.includes("fajita")) return "🌮";
+ if(n.includes("chicken")) return "🍗";
+ if(n.includes("salmon")||n.includes("shrimp")||n.includes("tuna")) return "🐟";
+ if(n.includes("toast")||n.includes("sandwich")||n.includes("wrap")||n.includes("pita")) return "🥪";
+ if(n.includes("oat")||n.includes("pancake")||n.includes("egg")) return "🥞";
+ if(n.includes("berry")||n.includes("apple")||n.includes("banana")||n.includes("fruit")) return "🍓";
+ if(n.includes("snack")||m.category==="Snacks") return "🍎";
+ return "🍽️";
+}
+function recipeCard(m){let fav=state.favorites.includes(m.id);return `<div class="card recipe-card"><div><div style="display:flex;justify-content:space-between;gap:8px"><div><div style="font-size:28px;margin-bottom:5px">${mealIcon(m)}</div><div class="small">${m.category} · ${m.time}</div><h3 style="font-family:Georgia,serif;font-size:19px;margin-top:5px">${m.name}</h3></div><button class="iconbtn" style="box-shadow:none;background:var(--cream)" onclick="toggleFav('${m.id}')">${fav?"♥":"♡"}</button></div><div class="badges">${m.tags.map(t=>`<span class="badge">${t}</span>`).join("")}</div></div><button class="btn" style="margin-top:12px" onclick="openRecipe('${m.id}')">View recipe →</button></div>`}
+function renderLibrary(){let q=(document.getElementById("search")?.value||"").toLowerCase();let cats=["All",...CATS];document.getElementById("filters").innerHTML=cats.map(c=>`<button class="filter ${activeCat===c?"active":""}" onclick="activeCat='${c}';renderLibrary()">${c}</button>`).join("");let arr=meals.filter(m=>(activeCat==="All"||m.category===activeCat||m.tags.includes(activeCat))&&(m.name+" "+m.ingredients.join(" ")+" "+m.tags.join(" ")).toLowerCase().includes(q));document.getElementById("libraryCount").textContent=arr.length+" recipes";document.getElementById("libraryGrid").innerHTML=arr.length?arr.map(recipeCard).join(""):`<div class="empty">No recipes found. Try another search or add your own.</div>`}
+function toggleFav(id){let i=state.favorites.indexOf(id);i<0?state.favorites.push(id):state.favorites.splice(i,1);save();renderLibrary();renderFavorites();toast(i<0?"Added to favorites":"Removed from favorites")}
+function renderFavorites(){let arr=meals.filter(m=>state.favorites.includes(m.id));document.getElementById("favoriteGrid").innerHTML=arr.length?arr.map(recipeCard).join(""):`<div class="empty">No favorites yet. Tap ♡ on a recipe to save it here.</div>`}
+function openRecipe(id){let m=meals.find(x=>x.id===id);if(!m)return;let icon=mealIcon(m);document.getElementById("sheet").innerHTML=`<button class="close" onclick="closeModal()">×</button><div class="meal-hero"><div class="meal-photo">${icon}</div><div class="meal-hero-copy"><div class="small">${m.category} · ${m.time} · ${m.servings} serving${m.servings==1?"":"s"}</div><h2>${m.name}</h2><div class="badges">${m.tags.map(t=>`<span class="badge">${t}</span>`).join("")}</div></div></div><div class="detail-grid"><div class="detail-box"><strong>Why it works</strong>Easy, familiar ingredients with options that fit a busy school or training day.</div><div class="detail-box"><strong>Grocery list</strong>${m.ingredients.length} ingredients · automatically included in your weekly list.</div></div><h3>Ingredients</h3><ul>${m.ingredients.map(x=>`<li>${x}</li>`).join("")}</ul><h3>Directions</h3><p>${m.instructions}</p><div class="actions"><button class="btn primary" onclick="assignRecipe('${m.id}')">Add to planner</button><button class="btn" onclick="toggleFav('${m.id}');openRecipe('${m.id}')">${state.favorites.includes(id)?"♥ Favorited":"♡ Favorite"}</button></div>`;openModal()}
+function assignRecipe(id){let m=meals.find(x=>x.id===id);let d=prompt("Which day? Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, or Sunday");if(!days.map(x=>x.toLowerCase()).includes((d||"").toLowerCase()))return;d=days.find(x=>x.toLowerCase()==d.toLowerCase());let type=m.category==="Snacks"?"Snacks":m.category==="Breakfast"?"Breakfast":m.category==="Lunch"?"Lunch":"Dinner";state.week[d][type]=id;save();closeModal();showView("planner");toast(m.name+" added to "+d)}
+function groceryData(){let map={};days.forEach(d=>["Breakfast","Lunch","Dinner","Snacks"].forEach(t=>{let m=meals.find(x=>x.id===state.week[d]?.[t]);if(m)m.ingredients.forEach(i=>{let key=i.toLowerCase();map[key]=(map[key]||{name:i,count:0});map[key].count++})}));return Object.values(map).sort((a,b)=>a.name.localeCompare(b.name))}
+function renderGroceries(){let items=groceryData();document.getElementById("groceryList").innerHTML=items.length?items.map(i=>`<div class="listitem"><button class="check ${state.grocery[i.name]?"done":""}" onclick="toggleGrocery('${esc(i.name)}')"></button><div class="${state.grocery[i.name]?"strike":""}">${i.name}${i.count>1?` <span class="small">×${i.count}</span>`:""}</div></div>`).join(""):`<div class="empty">Add meals to your week to generate your grocery list.</div>`}
+function esc(s){return s.replaceAll("'","&#39;")}
+function toggleGrocery(n){n=n.replaceAll("&#39;","'");state.grocery[n]=!state.grocery[n];save();renderGroceries()}
+function clearGroceries(){state.grocery={};save();renderGroceries();toast("Grocery checks cleared")}
+function makePrep(){let items=["Check the week and make a short shopping trip","Wash and chop produce","Cook a batch of rice or another grain","Prep 2–4 portions of a protein","Portion grab-and-go snacks","Wash containers and set aside meal-prep boxes"];state.prep=items.map((name,i)=>({id:i,name,done:false}));save();renderPrep();toast("Prep checklist refreshed")}
+function renderPrep(){if(!state.prep.length)makePrep();else document.getElementById("prepList").innerHTML=state.prep.map(x=>`<div class="listitem"><button class="check ${x.done?"done":""}" onclick="x=state.prep.find(y=>y.id===${x.id});x.done=!x.done;save();renderPrep()"></button><div class="${x.done?"strike":""}">${x.name}</div></div>`).join("")}
+function showPremade(){let rotations=[
+{name:"Balanced & Bright",pick:["Greek Yogurt Berry Bowl","Chicken Caesar Wrap","Honey Garlic Salmon","Berry Almond Smoothie"]},
+{name:"Easy Week",pick:["Peanut Butter Banana Oats","Turkey Hummus Crunch Wrap","Sheet Pan Chicken Fajitas","Strawberry Banana Smoothie"]},
+{name:"High Protein",pick:["Blueberry Protein Pancakes","Southwest Chicken Bowl","Creamy Chicken Tortellini","Cottage Cheese Berry Cup"]}];
+document.getElementById("sheet").innerHTML=`<button class="close" onclick="closeModal()">×</button><h2>Choose a Rotation</h2><p style="color:var(--muted);font-size:13px">Pick a starting theme, then customize anything you want.</p>${rotations.map((r,i)=>`<div class="card" style="margin-top:12px"><h3>${r.name}</h3><p class="small" style="margin-top:5px">${r.pick.join(" · ")}</p><button class="btn primary" style="margin-top:10px" onclick="applyRotation(${i})">Use this week</button></div>`).join("")}`;window.rotations=rotations;openModal()}
+function applyRotation(i){let r=window.rotations[i];state.week=buildWeek();let types=["Breakfast","Lunch","Dinner","Snacks"];r.pick.forEach((name,idx)=>{let m=meals.find(x=>x.name===name);if(m)state.week[days[idx]][types[idx]]=m.id});save();closeModal();renderWeek();renderGroceries();renderPrep();toast(r.name+" loaded")}
+function openTrainingIdeas(){
+document.getElementById("sheet").innerHTML=`<button class="close" onclick="closeModal()">×</button>
+<h2>Training-Day Ideas</h2>
+<p style="color:var(--muted);font-size:13px;line-height:1.5">For regular running and lifting, think of meals as fuel: include carbohydrates for energy, protein for recovery, and enough overall food to support your activity. You do not need to make every meal “perfect.”</p>
+<h3>Easy before training</h3><ul><li>Banana + peanut butter</li><li>Toast + eggs</li><li>Greek yogurt + berries + granola</li><li>Oatmeal + banana</li></ul>
+<h3>Easy after training</h3><ul><li>Chicken + rice + fruit</li><li>Turkey taco bowl</li><li>Greek yogurt bowl + granola</li><li>Peanut butter banana smoothie</li></ul>
+<h3>For picky days</h3><p>Use the <strong>Picky-Friendly</strong> filter and swap individual meals instead of forcing yourself to eat a whole week of foods you dislike.</p>
+<div class="actions"><button class="btn primary" onclick="activeCat='Picky-Friendly';closeModal();showView('library')">Browse Picky-Friendly →</button></div>`;
+openModal()
+}
+function openAdd(){document.getElementById("sheet").innerHTML=`<button class="close" onclick="closeModal()">×</button><h2>Add Your Recipe</h2><p style="color:var(--muted);font-size:13px;margin-bottom:15px">Your recipe will immediately join the library and future Shuffle Weeks.</p><form class="form" onsubmit="addMeal(event)"><input id="newName" required placeholder="Recipe name"><div class="two"><select id="newCat">${CATS.slice(0,4).map(x=>`<option>${x}</option>`).join("")}</select><input id="newTime" placeholder="Time e.g. 20 min"></div><input id="newServ" placeholder="Servings" value="2"><input id="newIng" required placeholder="Ingredients, separated by commas"><textarea id="newInst" required placeholder="Instructions"></textarea><input id="newTags" placeholder="Tags, separated by commas (optional)"><button class="btn primary" type="submit">Save Recipe</button></form>`;openModal()}
+function addMeal(e){e.preventDefault();let m={id:"custom"+Date.now(),name:newName.value.trim(),category:newCat.value,ingredients:newIng.value.split(",").map(x=>x.trim()).filter(Boolean),time:newTime.value||"15 min",servings:newServ.value||"2",instructions:newInst.value.trim(),tags:newTags.value.split(",").map(x=>x.trim()).filter(Boolean)};meals.push(m);save();closeModal();renderLibrary();toast("Recipe saved to your library ✦")}
+function openModal(){document.getElementById("modal").classList.add("show");document.body.style.overflow="hidden"}
+function closeModal(){document.getElementById("modal").classList.remove("show");document.body.style.overflow=""}
+if(!Object.keys(state.week).length)state.week=buildWeek();if(!state.prep.length)makePrep();else{save();renderPrep()}renderWeek();renderGroceries();
+</script>
+</body>
+</html>
